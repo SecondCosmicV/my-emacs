@@ -9,6 +9,13 @@
   :bind (:map dired-mode-map
               ("TAB" . dired-subtree-toggle)
               ("n" . dired-create-empty-file)))
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)))
+(use-package magit :ensure t)
 (use-package spacemacs-theme
   :ensure t
   :defer t
@@ -79,7 +86,7 @@
           (let* ((col (current-column))
                  (spaces (- tab-width (mod col tab-width))))
             (insert (make-string spaces ?\s))))))))
-(defun my-deindent-at (pos)
+(defun my-dedent-at (pos)
   (goto-char pos)
   (if (bolp)
     (delete-char -1)
@@ -107,12 +114,12 @@
 (defun my-shift-tab ()
   (interactive)
   (when (use-region-p)
-    (my-apply-on-region-lines #'my-deindent-at)))
+    (my-apply-on-region-lines #'my-dedent-at)))
 (defun my-backspace ()
   (interactive)
   (if (use-region-p)
     (delete-region (region-beginning) (region-end))
-    (my-deindent-at (point))))
+    (my-dedent-at (point))))
 (defvar my-keys-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "RET") 'my-newline)
@@ -124,6 +131,13 @@
   "Minor mode for custom keybindings that override major modes."
   :lighter " MyKeys"
   :keymap my-keys-mode-map)
+(add-hook 'before-save-hook
+          (lambda ()
+            (delete-trailing-whitespace)
+            (save-excursion
+              (goto-char (point-max))
+              (unless (looking-back "\n\n" nil)
+                (insert "\n")))))
 (dolist (hook '(lisp-interaction-mode-hook
                 emacs-lisp-mode-hook
                 sh-mode-hook
