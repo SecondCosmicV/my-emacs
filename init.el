@@ -1,12 +1,18 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-(require 'yaml-mode)
-(require 'dockerfile-mode)
+(use-package yaml-mode :ensure t)
+(use-package dockerfile-mode :ensure t)
 (use-package dired-subtree
+  :ensure t
   :after dired
-  :bind (:map dired-mode-map ("TAB" . dired-subtree-toggle)))
-(load-theme 'spacemacs-dark t)
+  :bind (:map dired-mode-map
+              ("TAB" . dired-subtree-toggle)
+              ("n" . dired-create-empty-file)))
+(use-package spacemacs-theme
+  :ensure t
+  :defer t
+  :init (load-theme 'spacemacs-dark t))
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -18,30 +24,9 @@
 (setq inhibit-startup-screen t)
 (setq initial-buffer-choice t)
 (setq initial-scratch-message "")
+(setq ring-bell-function 'ignore)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
-(dolist (hook '(sh-mode-hook
-                c-mode-hook
-                c++-mode-hook
-                python-mode-hook
-                html-mode-hook
-                mhtml-mode-hook
-                css-mode-hook
-                latex-mode
-                dockerfile-mode-hook))
-  (add-hook hook (lambda () (setq-local tab-width 4))))
-(dolist (hook '(emacs-lisp-mode-hook
-                lisp-interaction-mode-hook
-                js-mode-hook
-                json-mode-hook
-                yaml-mode-hook))
-  (add-hook hook (lambda () (setq-local tab-width 2))))
-(defun my-get-line-leading-ws ()
-  (save-excursion
-    (beginning-of-line)
-    (buffer-substring-no-properties
-      (point)
-      (progn (skip-chars-forward " \t") (point)))))
 (defun my-apply-on-region-lines (fn)
   (let ((beg (region-beginning))
         (end (region-end)))
@@ -60,7 +45,27 @@
         (dolist (pos lines)
           (goto-char pos)
           (back-to-indentation)
-          (funcall fn (point)))))))
+          (funcall fn (point)))))
+    (setq deactivate-mark nil)))
+(defun my-detect-indent (fallback)
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "^\\( +\\|\t+\\)" nil t)
+      (let ((ws (match-string 1)))
+        (if (string-match-p "^\t" ws)
+          (progn
+            (setq-local indent-tabs-mode t)
+            (setq-local tab-width fallback))
+          (setq-local indent-tabs-mode nil)
+          (setq-local tab-width (length ws))))
+      (setq-local indent-tabs-mode nil)
+      (setq-local tab-width fallback))))
+(defun my-get-line-leading-ws ()
+  (save-excursion
+    (beginning-of-line)
+    (buffer-substring-no-properties
+      (point)
+      (progn (skip-chars-forward " \t") (point)))))
 (defun my-indent-at (pos)
   (goto-char pos)
   (let* ((indent (my-get-line-leading-ws))
@@ -131,7 +136,23 @@
                 html-mode-hook
                 mhtml-mode-hook
                 css-mode-hook
-                latex-mode
+                latex-mode-hook
                 dockerfile-mode-hook))
   (add-hook hook #'my-keys-mode))
+(dolist (hook '(sh-mode-hook
+                c-mode-hook
+                c++-mode-hook
+                python-mode-hook
+                html-mode-hook
+                mhtml-mode-hook
+                css-mode-hook
+                latex-mode-hook
+                dockerfile-mode-hook))
+  (add-hook hook (lambda () (my-detect-indent 4))))
+(dolist (hook '(emacs-lisp-mode-hook
+                lisp-interaction-mode-hook
+                js-mode-hook
+                json-mode-hook
+                yaml-mode-hook))
+  (add-hook hook (lambda () (my-detect-indent 2))))
 
