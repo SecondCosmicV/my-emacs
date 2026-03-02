@@ -6,13 +6,17 @@
         '((personal
            :mail-address "@gmail.com"
            :incoming-url "imaps://imap.gmail.com"
-           :outgoing-url "smtps://smtp.gmail.com"))
-        '((work
+           :outgoing-url "smtps://smtp.gmail.com")
+        (old
            :mail-address "@gmail.com"
            :incoming-url "imaps://imap.gmail.com"
-           :outgoing-url "smtps://smtp.gmail.com"))
-        '((uni
+           :outgoing-url "smtps://smtp.gmail.com")
+        (online
+           :mail-address "@gmail.com"
+           :incoming-url "imaps://imap.gmail.com"
+           :outgoing-url "smtps://smtp.gmail.com")
+        (uni
            :mail-address "@.edu"
-           :incoming-url ""
-           :outgoing-url ""))))
+           :incoming-url "imaps://username@.edu"
+           :outgoing-url "smtp://username@.edu"))))
 
