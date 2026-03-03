@@ -7,8 +7,7 @@
   :ensure t
   :after dired
   :bind (:map dired-mode-map
-              ("TAB" . dired-subtree-toggle)
-              ("n" . dired-create-empty-file)))
+              ("TAB" . dired-subtree-toggle)))
 (use-package multiple-cursors
   :ensure t
   :bind (("C-S-c C-S-c" . mc/edit-lines)
@@ -24,6 +23,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode 1)
+(define-key dired-mode-map (kbd "e") 'dired-create-empty-file)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq create-lockfiles nil)
@@ -38,4 +38,9 @@
 (load custom-file 'noerror)
 (load (expand-file-name "./src/indent.el" user-emacs-directory))
 (load (expand-file-name "./src/email.el" user-emacs-directory) 'noerror)
+(dolist (x (directory-files (expand-file-name "plugins" user-emacs-directory) t))
+  (let ((basename (file-name-nondirectory x)))
+    (when (not (member basename '("." "..")))
+      (add-to-list 'load-path x)
+      (require (intern basename)))))
 
