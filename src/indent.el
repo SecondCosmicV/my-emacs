@@ -79,6 +79,9 @@
               (goto-char (point-max))
               (unless (looking-back "\n\n" nil)
                 (insert "\n")))))
+(add-hook 'c++-mode-hook
+  (lambda ()
+    (setq-local c-electric-flag nil)))
 (dolist (hook '(lisp-interaction-mode-hook
                 emacs-lisp-mode-hook
                 sh-mode-hook
