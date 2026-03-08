@@ -84,7 +84,10 @@
   :keymap my/my-indent-mode-map)
 (add-hook 'before-save-hook
           (lambda ()
-            (delete-trailing-whitespace)
+            (let (pref (buffer-substring (pos-bol) (point)))
+              (delete-trailing-whitespace)
+              (when (= (point) (pos-bol))
+                (insert pref)))
             (save-excursion
               (goto-char (point-max))
               (unless (looking-back "\n\n" nil)
