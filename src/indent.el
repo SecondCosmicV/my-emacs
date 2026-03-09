@@ -84,14 +84,13 @@
   :keymap my/my-indent-mode-map)
 (add-hook 'before-save-hook
           (lambda ()
-            (let (pref (buffer-substring (pos-bol) (point)))
+            (let ((pref (buffer-substring (pos-bol) (point))))
               (delete-trailing-whitespace)
               (when (= (point) (pos-bol))
                 (insert pref)))
             (save-excursion
-              (goto-char (point-max))
-              (unless (looking-back "\n\n" nil)
-                (insert "\n")))))
+              (end-of-buffer)
+              (insert "\n"))))
 (add-hook 'c++-mode-hook
   (lambda ()
     (setq-local c-electric-flag nil)))
