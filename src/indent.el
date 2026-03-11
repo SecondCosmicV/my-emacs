@@ -89,7 +89,7 @@
               (when (= (point) (pos-bol))
                 (insert pref)))
             (save-excursion
-              (end-of-buffer)
+              (goto-char (point-max))
               (insert "\n"))))
 (add-hook 'c++-mode-hook
   (lambda ()
