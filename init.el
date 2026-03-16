@@ -6,14 +6,16 @@
 (use-package dired-subtree
   :ensure t
   :after dired
-  :bind (:map dired-mode-map
-              ("TAB" . dired-subtree-toggle)))
+  :bind (
+    :map dired-mode-map
+    ("TAB" . dired-subtree-toggle)))
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this)))
+  :bind (
+    ("C-S-c C-S-c" . mc/edit-lines)
+    ("C->" . mc/mark-next-like-this)
+    ("C-<" . mc/mark-previous-like-this)
+    ("C-c C-<" . mc/mark-all-like-this)))
 (use-package magit :ensure t)
 (use-package spacemacs-theme
   :ensure t
@@ -24,8 +26,8 @@
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (define-key dired-mode-map (kbd "e") 'dired-create-empty-file)
-(setq make-backup-files nil)
 (setq auto-save-default nil)
+(setq make-backup-files nil)
 (setq create-lockfiles nil)
 (setq inhibit-startup-screen t)
 (setq initial-buffer-choice t)

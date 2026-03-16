@@ -1,6 +1,7 @@
 (defun my/apply-on-region-lines (fn)
-  (let ((beg (line-number-at-pos (region-beginning)))
-        (end (line-number-at-pos (region-end))))
+  (let (
+    (beg (line-number-at-pos (region-beginning)))
+    (end (line-number-at-pos (region-end))))
     (save-excursion
       (goto-line beg)
       (while (<= (line-number-at-pos) end)
@@ -22,10 +23,11 @@
       (setq-local indent-tabs-mode nil)
       (setq-local tab-width fallback))))
 (defun my/get-num-spaces ()
-  (- (point)
-     (save-excursion
-       (skip-chars-backward " " (line-beginning-position))
-       (point))))
+  (-
+    (point)
+    (save-excursion
+      (skip-chars-backward " " (line-beginning-position))
+      (point))))
 (defun my/indent ()
   (if indent-tabs-mode
     (insert "\t")
@@ -41,10 +43,12 @@
     (delete-char (- to-delete))))
 (defun my/newline ()
   (interactive)
-  (let ((indent (save-excursion
-                  (back-to-indentation)
-                  (buffer-substring (line-beginning-position) (point))))
-        (rest (delete-and-extract-region (point) (line-end-position))))
+  (let (
+    (indent
+      (save-excursion
+        (back-to-indentation)
+        (buffer-substring (line-beginning-position) (point))))
+    (rest (delete-and-extract-region (point) (line-end-position))))
     (insert "\n" indent rest))
   (back-to-indentation))
 (defun my/tab ()
@@ -62,10 +66,11 @@
   (when (use-region-p)
     (my/apply-on-region-lines
       (lambda ()
-        (delete-char (-
-          (if indent-tabs-mode
-            1
-            (min tab-width (my/get-num-spaces)))))))))
+        (delete-char
+          (-
+            (if indent-tabs-mode
+              1
+              (min tab-width (my/get-num-spaces)))))))))
 (defun my/backspace ()
   (interactive)
   (if (use-region-p)
@@ -83,46 +88,52 @@
   :lighter " MyIndent"
   :keymap my/my-indent-mode-map)
 (add-hook 'before-save-hook
-          (lambda ()
-            (let ((pref (buffer-substring (pos-bol) (point))))
-              (delete-trailing-whitespace)
-              (when (= (point) (pos-bol))
-                (insert pref)))
-            (save-excursion
-              (goto-char (point-max))
-              (insert "\n"))))
+  (lambda ()
+    (let ((pref (buffer-substring (pos-bol) (point))))
+      (delete-trailing-whitespace)
+      (when (= (point) (pos-bol))
+        (insert pref)))
+    (save-excursion
+      (goto-char (point-max))
+      (insert "\n"))))
 (add-hook 'c++-mode-hook
   (lambda ()
     (setq-local c-electric-flag nil)))
-(dolist (hook '(lisp-interaction-mode-hook
-                emacs-lisp-mode-hook
-                sh-mode-hook
-                c-mode-hook
-                c++-mode-hook
-                python-mode-hook
-                js-mode-hook
-                json-mode-hook
-                yaml-mode-hook
-                html-mode-hook
-                mhtml-mode-hook
-                css-mode-hook
-                latex-mode-hook
-                dockerfile-mode-hook))
+(dolist
+  (hook '(
+    lisp-interaction-mode-hook
+    emacs-lisp-mode-hook
+    sh-mode-hook
+    c-mode-hook
+    c++-mode-hook
+    python-mode-hook
+    js-mode-hook
+    json-mode-hook
+    yaml-mode-hook
+    html-mode-hook
+    mhtml-mode-hook
+    css-mode-hook
+    latex-mode-hook
+    dockerfile-mode-hook))
   (add-hook hook #'my/my-indent-mode))
-(dolist (hook '(sh-mode-hook
-                c-mode-hook
-                c++-mode-hook
-                python-mode-hook
-                html-mode-hook
-                mhtml-mode-hook
-                css-mode-hook
-                latex-mode-hook
-                dockerfile-mode-hook))
+(dolist
+  (hook '(
+    sh-mode-hook
+    c-mode-hook
+    c++-mode-hook
+    python-mode-hook
+    html-mode-hook
+    mhtml-mode-hook
+    css-mode-hook
+    latex-mode-hook
+    dockerfile-mode-hook))
   (add-hook hook (lambda () (my/detect-indent 4))))
-(dolist (hook '(emacs-lisp-mode-hook
-                lisp-interaction-mode-hook
-                js-mode-hook
-                json-mode-hook
-                yaml-mode-hook))
+(dolist
+  (hook '(
+    emacs-lisp-mode-hook
+    lisp-interaction-mode-hook
+    js-mode-hook
+    json-mode-hook
+    yaml-mode-hook))
   (add-hook hook (lambda () (my/detect-indent 2))))
 
